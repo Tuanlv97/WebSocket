@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.Net.WebSockets;
+﻿using System.Net.WebSockets;
 using System.Text;
-using WebSocketClient;
 
 var ws = new ClientWebSocket();
 string name;
@@ -9,7 +7,7 @@ string jwt;
 string secret = "C421AAEE0D114E9C";
 while (true)
 {
-    Console.Write("Input name: ");
+    Console.Write("Input name Client 3: ");
     name = Console.ReadLine();
     string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZXNzYWdlIjoiSldUIFJ1bGVzISIsImlhdCI6MTQ1OTQ0ODExOSwiZXhwIjoxNDU5NDU0NTE5fQ.-yIVBD5b73C75osbmwwshQNRC7frWUYrqaTjTpza2y4\r\n";
     jwt = "Bearer " + token;
@@ -23,18 +21,10 @@ Console.WriteLine("Connecting to server");
 //ws.Options.SetRequestHeader("Authorization", jwt);
 
 var url = new Uri("ws://localhost:7000/ws");
-
-var request = new RequestModel
-{
-    Secret = secret
-};
-
-var requestModel = JsonConvert.SerializeObject(request);
-
 ws.Options.SetRequestHeader("Content-Type", "application/json");
 ws.Options.SetRequestHeader("Authorization", jwt);
-ws.Options.SetRequestHeader("data", requestModel);
-
+ws.Options.SetRequestHeader("socketIdPc", "0f8fad5b-d9cb-469f-a165-70867728950e");
+ws.Options.SetRequestHeader("Connection", "Upgrade");
 
 await ws.ConnectAsync(url, CancellationToken.None);
 

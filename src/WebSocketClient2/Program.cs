@@ -1,15 +1,16 @@
 ﻿using Newtonsoft.Json;
 using System.Net.WebSockets;
 using System.Text;
-using WebSocketClient;
+using WebSocketClient2;
 
 var ws = new ClientWebSocket();
 string name;
 string jwt;
 string secret = "C421AAEE0D114E9C";
+
 while (true)
 {
-    Console.Write("Input name: ");
+    Console.Write("Input name Client 2: ");
     name = Console.ReadLine();
     string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZXNzYWdlIjoiSldUIFJ1bGVzISIsImlhdCI6MTQ1OTQ0ODExOSwiZXhwIjoxNDU5NDU0NTE5fQ.-yIVBD5b73C75osbmwwshQNRC7frWUYrqaTjTpza2y4\r\n";
     jwt = "Bearer " + token;
@@ -18,23 +19,21 @@ while (true)
 
 
 Console.WriteLine("Connecting to server");
-//await ws.ConnectAsync(new Uri($"ws://localhost:7000/ws?name={name}"),CancellationToken.None);
-//ws.Options.SetRequestHeader("Content-Type", "application/json");
-//ws.Options.SetRequestHeader("Authorization", jwt);
-
-var url = new Uri("ws://localhost:7000/ws");
 
 var request = new RequestModel
 {
-    Secret = secret
+    Authorization = jwt,
+    Contents = "Thong tin dien thoai quet Qr bao gom anh va dien thoai",
+    Secret = secret,
+    SocketIdPc = "2e59377e-8409-43da-b0b6-f13ef045ac83"
 };
 
 var requestModel = JsonConvert.SerializeObject(request);
 
+var url = new Uri("ws://localhost:7000/ws");
 ws.Options.SetRequestHeader("Content-Type", "application/json");
-ws.Options.SetRequestHeader("Authorization", jwt);
 ws.Options.SetRequestHeader("data", requestModel);
-
+ws.Options.SetRequestHeader("Authorization", jwt);
 
 await ws.ConnectAsync(url, CancellationToken.None);
 
@@ -64,12 +63,17 @@ var sendTask = Task.Run(async () =>
     {
         var message = Console.ReadLine();
 
+        request.Contents = message;
+        var requestModel = JsonConvert.SerializeObject(request);
+
+
+        var bytes = Encoding.UTF8.GetBytes(requestModel);
+
         if (message == "exit")
         {
+            await ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Close, true, CancellationToken.None);
             break;
         }
-
-        var bytes = Encoding.UTF8.GetBytes(message);
         await ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
     }
 });

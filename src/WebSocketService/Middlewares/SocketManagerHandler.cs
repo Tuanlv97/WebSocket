@@ -37,7 +37,7 @@ namespace WebSocketService.Middlewares
 
         public async Task SendMessageAsync(string socketId, string message)
         {
-            await SendMessageAsync(SocketConnectionManager.GetSocketById(socketId), message);
+            await SendMessageAsync(SocketConnectionManager.GetSocketById(socketId).FirstOrDefault().Value, message);
         }
 
         public async Task SendMessageToAllAsync(string message)

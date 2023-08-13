@@ -7,9 +7,10 @@ namespace WebSocketService.Middlewares
     {
         private ConcurrentDictionary<string, WebSocket> _sockets = new ConcurrentDictionary<string, WebSocket>();
 
-        public WebSocket GetSocketById(string id)
+        public Dictionary<string, WebSocket> GetSocketById(string id)
         {
-            return _sockets.FirstOrDefault(p => p.Key == id).Value;
+            var data =  _sockets.Where(c => c.Key == id).ToDictionary(c => c.Key, m => m.Value);
+            return data;
         }
 
         public ConcurrentDictionary<string, WebSocket> GetAll()
@@ -45,5 +46,6 @@ namespace WebSocketService.Middlewares
         {
             return Guid.NewGuid().ToString();
         }
+
     }
 }
